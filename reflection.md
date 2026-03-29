@@ -50,10 +50,14 @@ The tradeoff is reasonable because we are working with computers instead of real
 - How did you use AI tools during this project (for example: design brainstorming, debugging, refactoring)?
 + UML diagram: asked it to explain why Scheduler "uses" Owner, why toString() method is only in the ScheduleItem class and not Task/Plan.
 - What kinds of prompts or questions were most helpful?
+"Based on my ... file, write these functions."
+"From this instruction guide [paste it], implement them."
+I think being short and straightforward helps a lot. 
 
 **b. Judgment and verification**
 
 - Describe one moment where you did not accept an AI suggestion as-is.
+For Phase 2 step 3, I prompted "Generate tests" to Copilot, and it wrote a 337-line file for me. I suppose I had to be more specific about the 2 methods I needed to test, so I Undo the Copilot suggestions and re-wrote the prompt.
 - How did you evaluate or verify what the AI suggested?
 I prompted Gemini to explain if what Copilot suggested was reasonable, but I didn't specify this code is written by AI so Gemini wouldn't know if those were human's or AI's mistakes.
 

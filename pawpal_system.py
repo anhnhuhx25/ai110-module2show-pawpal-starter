@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 from typing import List, Dict, Any, Optional
 from uuid import uuid4
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 '''
 Author: Anh Nhu
 '''
@@ -16,11 +16,24 @@ class Task:
     frequency: str = "daily"  # 'daily', 'weekly', etc.
     preferred_time_window: str = "any"  # 'morning', 'afternoon', 'evening', 'any'
     is_completed_today: bool = False
+    next_due_date: date = field(default_factory=date.today)
     id: str = field(default_factory=lambda: str(uuid4()))
     
     def mark_completed(self) -> None:
-        """Mark the task as completed for today."""
+        """Mark the task as completed and update next due date."""
         self.is_completed_today = True
+
+        today = date.today()
+        if self.frequency == 'daily':
+            self.next_due_date = today + timedelta(days=1)
+            print(f"Task scheduled for {self.next_due_date}")
+        elif self.frequency == 'weekly':
+            self.next_due_date = today + timedelta(days=7)
+            print(f"Task scheduled for {self.next_due_date}")
+        else:
+            # Keep existing due date for other frequencies or set to tomorrow by default
+            self.next_due_date = today + timedelta(days=1)
+            print(f"Task scheduled for {self.next_due_date}")
     
     def reset_for_new_day(self) -> None:
         """Reset the task for a new day."""
@@ -84,6 +97,25 @@ class Owner:
         tasks = []
         for pet in self.pets:
             tasks.extend(pet.tasks)
+        return tasks
+    
+    def filter_tasks(self, status=None, pet_name=None) -> List[Task]:
+        """
+        Filter tasks based on completion status and/or pet name.
+        
+        Args:
+            status: If True/False, filter by is_completed_today
+            pet_name: If provided, only include tasks from this pet
+        
+        Returns:
+            List of filtered tasks
+        """
+        tasks = []
+        for pet in self.pets:
+            if pet_name is None or pet.name == pet_name:
+                for task in pet.tasks:
+                    if status is None or task.is_completed_today == status:
+                        tasks.append(task)
         return tasks
 
 
@@ -212,6 +244,29 @@ class Scheduler:
         
         return plan
     
+    def check_for_conflicts(self, plan: Plan) -> List[str]:
+        """
+        Check scheduled items for overlapping time windows.
+
+        Args:
+            plan: The plan to validate
+
+        Returns:
+            List[str]: warnings for detected conflicts or [] if none
+        """
+        conflicts = []
+        previous_item = None
+
+        for item in plan.scheduled_items:
+            if previous_item is not None:
+                if item.start_time < previous_item.end_time:
+                    conflicts.append(
+                        f"Conflict detected: [{previous_item.task.description}] overlaps with [{item.task.description}]"
+                    )
+            previous_item = item
+
+        return conflicts
+    
     def explain_plan(self, plan: Plan) -> str:
         """
         Explain the reasoning behind the generated plan.
@@ -236,4 +291,20 @@ class Scheduler:
         """
         max_minutes = int(self.owner.available_time_hours * 60)
         return plan.total_duration <= max_minutes
-        return "Scheduling logic explanation"
+    
+    def sort_tasks_by_time(self, tasks: List[Task]) -> List[Task]:
+        """
+        Sort tasks by their preferred time window chronologically.
+        Tasks with 'any' time window are sorted last.
+        
+        Args:
+            tasks: List of tasks to sort
+        
+        Returns:
+            List of tasks sorted by preferred time
+        """
+        return sorted(tasks, key=lambda task: (
+            task.preferred_time_window == 'any',
+            int(task.preferred_time_window.split(':')[0]) * 60 + int(task.preferred_time_window.split(':')[1])
+            if task.preferred_time_window != 'any' else 0
+        ))
