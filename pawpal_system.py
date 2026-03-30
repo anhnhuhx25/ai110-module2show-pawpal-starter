@@ -38,6 +38,20 @@ class Task:
     def reset_for_new_day(self) -> None:
         """Reset the task for a new day."""
         self.is_completed_today = False
+    
+    def get_emoji(self) -> str:
+        """Return an emoji based on keywords in the task description."""
+        desc = self.description.lower()
+        if 'walk' in desc:
+            return '🦮'
+        elif 'feed' in desc:
+            return '🥣'
+        elif 'groom' in desc:
+            return '✂️'
+        elif 'play' in desc:
+            return '🎾'
+        else:
+            return '🐾'
 
 
 @dataclass
@@ -136,7 +150,7 @@ class ScheduleItem:
         """Return a human-readable string representation of the scheduled item."""
         start_str = self.start_time.strftime("%I:%M %p")
         end_str = self.end_time.strftime("%I:%M %p")
-        return (f"{start_str} - {end_str}: {self.task.description} "
+        return (f"{start_str} - {end_str}: {self.task.get_emoji()} {self.task.description} "
                 f"for {self.pet.name} ({self.get_duration()} minutes, Priority: {self.task.priority})")
 
 

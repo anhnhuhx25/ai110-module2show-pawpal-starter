@@ -48,14 +48,29 @@ The PawPal+ system has been upgraded from a static list to an intelligent schedu
 - Chronological Sorting: Tasks are no longer scheduled in the order they were typed. The system uses lambda sorting to organize tasks by their preferred_time_window (e.g., 08:00 before 14:00).
 - Intelligent Filtering: Owners can now query their dashboard for specific subsets of data, such as "Only Luna's tasks" or "Only uncompleted daily tasks."
 - Automated Recurrence: Using Python's timedelta, the system automatically calculates and updates the due_date for Daily and Weekly tasks once they are marked complete.
-- Conflict Detection: A lightweight safety check identifies overlapping task windows (e.g., two 30-minute walks starting at the same time) and issues a warning to the user.
-- Constraint Management: The scheduler strictly respects the Owner's available_time_hours, prioritizing high-value tasks and cutting lower-priority items if the time budget is exceeded.
+
+### Features
+
+- **Priority-Based Scheduling**: Tasks are sorted by priority (highest first) and scheduled sequentially starting from 9:00 AM, respecting the owner's available time hours.
+- **Time Window Sorting**: The `sort_tasks_by_time` method organizes tasks by their preferred time windows, placing 'any' time tasks last.
+- **Daily Recurrence**: Upon task completion, `mark_completed` increments the `next_due_date` by 1 day for daily tasks using `timedelta`.
+- **Conflict Detection**: The `check_for_conflicts` method identifies overlapping schedule items and returns warning messages.
+- **Plan Generation with Reasoning**: The scheduler produces a daily plan with detailed reasoning explaining task selection and scheduling logic.
+- **Streamlit UI Integration**: The app generates schedules, displays reasoning, and shows conflict warnings using Streamlit components.
+- **Conflict Detection**: A lightweight safety check identifies overlapping task windows (e.g., two 30-minute walks starting at the same time) and issues a warning to the user.
+- **Constraint Management**: The scheduler strictly respects the Owner's available_time_hours, prioritizing high-value tasks and cutting lower-priority items if the time budget is exceeded.
 
 ### Testing PawPal+
 To ensure the reliability of the scheduling and recurrence logic, this project includes an automated test suite powered by `pytest`.
 Confidence level: 5/5
 How to Run tests
+
 From the root directory, ensure your virtual environment is activated and run:
 ```bash
 python -m pytest
+```
+## Demo
+<a href="/course_images/ai110/demo.jpg" target="_blank">
+<img src='/course_images/ai110/demo.jpg' title='PawPal App' width='' alt='PawPal App' class='center-block' /></a>.
 
+Challenge #4 accepted! - I enhanced the user experience by implementing a dynamic emoji-mapping system that automatically assigns visual icons to tasks based on keywords, significantly improving the scannability and professional 'feel' of the daily schedule.
