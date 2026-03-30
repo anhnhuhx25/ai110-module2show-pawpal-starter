@@ -42,7 +42,7 @@ pip install -r requirements.txt
 6. Connect your logic to the Streamlit UI in `app.py`.
 7. Refine UML so it matches what you actually built.
 
-SMARTER SCEDULING
+### Smarter Scheduling
 The PawPal+ system has been upgraded from a static list to an intelligent scheduling engine. Key features include:
 
 - Chronological Sorting: Tasks are no longer scheduled in the order they were typed. The system uses lambda sorting to organize tasks by their preferred_time_window (e.g., 08:00 before 14:00).
@@ -50,3 +50,12 @@ The PawPal+ system has been upgraded from a static list to an intelligent schedu
 - Automated Recurrence: Using Python's timedelta, the system automatically calculates and updates the due_date for Daily and Weekly tasks once they are marked complete.
 - Conflict Detection: A lightweight safety check identifies overlapping task windows (e.g., two 30-minute walks starting at the same time) and issues a warning to the user.
 - Constraint Management: The scheduler strictly respects the Owner's available_time_hours, prioritizing high-value tasks and cutting lower-priority items if the time budget is exceeded.
+
+### Testing PawPal+
+To ensure the reliability of the scheduling and recurrence logic, this project includes an automated test suite powered by `pytest`.
+Confidence level: 5/5
+How to Run tests
+From the root directory, ensure your virtual environment is activated and run:
+```bash
+python -m pytest
+
